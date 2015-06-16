@@ -1,0 +1,43 @@
+NAME="dcraw"
+VERSION=9.25.0
+RELEASE=1
+CATEGORY="Graphics"
+SUMMARY="RAW image decoder tool"
+DESCRIPTION="dcraw decodes raw photos, displays metadata, and extracts thumbnails."
+HOMEPAGE="http://cybercom.net/~dcoffin/dcraw/"
+SRC_URI="${HOMEPAGE}/archive/dcraw-${VERSION}.tar.gz"
+SRC_DIR="dcraw"
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/dcraw.git/plain/dcraw-9.25.0-CVE-2013-1438.patch
+	http://pkgs.fedoraproject.org/cgit/dcraw.git/plain/dcraw-9.21-lcms2-error-reporting.patch
+	http://pkgs.fedoraproject.org/cgit/dcraw.git/plain/dcraw-9.25.0-CVE-2015-3885.patch
+"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	verbose \
+	${CC} ${CFLAGS} -DLOCALEDIR="\"/usr/share/locale\"" -o dcraw.exe \
+		dcraw.c -llcms2 -ljasper -ljpeg -lintl
+
+	for c in dcraw_*.po
+	do
+		msgfmt -o ${c%.po}.mo ${c}
+	done
+}
+
+src_install() {
+	cd ${B}
+	dobin dcraw.exe
+	doman dcraw.1
+
+	for c in dcraw_*.mo
+	do
+		lang=${c%.mo}
+		lang=${lang#dcraw_}
+		insinto /usr/share/locale/${lang}/LC_MESSAGES
+		newins ${c} dcraw.mo
+		insinto /usr/share/man/${lang}/man1/
+		newins dcraw_${lang}.1 dcraw.1
+	done
+}
