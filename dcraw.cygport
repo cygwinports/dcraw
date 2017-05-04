@@ -1,6 +1,6 @@
 NAME="dcraw"
 VERSION=9.27.0
-RELEASE=1
+RELEASE=2
 CATEGORY="Graphics"
 SUMMARY="RAW image decoder tool"
 DESCRIPTION="dcraw decodes raw photos, displays metadata, and extracts thumbnails."
